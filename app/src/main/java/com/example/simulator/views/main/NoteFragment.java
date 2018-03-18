@@ -37,7 +37,7 @@ public class NoteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         bundle = getArguments();
-        View v = inflater.inflate(R.layout.subfragment_transfering, container, false);
+        View v = inflater.inflate(R.layout.subfragment_note, container, false);
         ButterKnife.bind(this, v);
         return v;
     }

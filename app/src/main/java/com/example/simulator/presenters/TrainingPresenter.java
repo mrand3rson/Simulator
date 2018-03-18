@@ -20,7 +20,7 @@ public class TrainingPresenter implements ITraining {
     private final int VIBRATION_DURATION = 200;
     private final Context context;
     private boolean landscape;
-    private float prevRoll;
+    private float prevPosition;
     private long startIterationTime;
     private int count, warningsCount;
 
@@ -29,7 +29,28 @@ public class TrainingPresenter implements ITraining {
     }
 
     @Override
-    public int checkExercise1(float[] orientationAngles) {
+    public int checkExercise(float[] orientationAngles, int trainingType) {
+
+        if (lowIntensity(trainingType))
+            return EXERCISE_FAILED;
+
+        switch (trainingType) {
+            case TrainingTypes.TYPE1: {
+                return checkExercise1(orientationAngles);
+            }
+            case TrainingTypes.TYPE2: {
+                return checkExercise2(orientationAngles);
+            }
+            case TrainingTypes.TYPE3: {
+                return checkExercise3(orientationAngles);
+            }
+            default: {
+                return -2;
+            }
+        }
+    }
+
+    private int checkExercise1(float[] orientationAngles) {
         float pitch = orientationAngles[1];
         float roll = orientationAngles[2];
 
@@ -37,29 +58,66 @@ public class TrainingPresenter implements ITraining {
             if (!landscape) {
                 landscape = true;
 
-                if (prevRoll == 0) {
-                    prevRoll = Math.signum(roll);
+                if (prevPosition == 0) {
+                    prevPosition = Math.signum(roll);
                     startIterationTime = System.currentTimeMillis();
                     vibrationResponse(VIBRATION_DURATION/4);
                 }
                 else {
                     if (Math.signum(roll) != 0
-                            && Math.signum(roll) != prevRoll) {
-                        prevRoll = Math.signum(roll);
+                            && Math.signum(roll) != prevPosition) {
+                        prevPosition = Math.signum(roll);
                         startIterationTime = System.currentTimeMillis();
                         count++;
-                        vibrationResponse(VIBRATION_DURATION);
-                        if (checkIfCompleted1())
+
+                        if (checkIfCompleted1()) {
+                            vibrationResponse(VIBRATION_DURATION*2);
                             return EXERCISE_COMPLETED;
+                        }
+                        vibrationResponse(VIBRATION_DURATION);
                     }
                 }
             }
         } else {
             landscape = false;
         }
-        if (lowIntensity(TrainingTypes.TYPE1))
-            return EXERCISE_FAILED;
+        return count;
+    }
 
+    private int checkExercise2(float[] orientationAngles) {
+        return checkExercise1(orientationAngles);
+    }
+
+    private int checkExercise3(float[] orientationAngles) {
+        float yaw = orientationAngles[0];
+        float pitch = orientationAngles[1];
+
+        if (pitch > 0) {
+            if (!landscape) {
+                landscape = true;
+
+                if (prevPosition == 0) {
+                    prevPosition = Math.signum(yaw);
+                    startIterationTime = System.currentTimeMillis();
+                    vibrationResponse(VIBRATION_DURATION/4);
+                } else {
+                    if (Math.signum(yaw) != 0
+                            && Math.signum(yaw) != prevPosition) {
+                        prevPosition = Math.signum(yaw);
+                        startIterationTime = System.currentTimeMillis();
+                        count++;
+
+                        if (checkIfCompleted3()) {
+                            vibrationResponse(VIBRATION_DURATION*2);
+                            return EXERCISE_COMPLETED;
+                        }
+                        vibrationResponse(VIBRATION_DURATION);
+                    }
+                }
+            }
+        } else {
+            landscape = false;
+        }
         return count;
     }
 
@@ -111,6 +169,10 @@ public class TrainingPresenter implements ITraining {
     }
 
     private boolean checkIfCompleted1() {
-        return count == 5;
+        return count == TrainingTypes.getFullIterationsCount(TrainingTypes.TYPE1);
+    }
+
+    private boolean checkIfCompleted3() {
+        return count == TrainingTypes.getFullIterationsCount(TrainingTypes.TYPE3);
     }
 }

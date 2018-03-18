@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.simulator.R;
 import com.example.simulator.presenters.ITraining;
 import com.example.simulator.presenters.TrainingPresenter;
+import com.example.simulator.tools.TrainingTypes;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -99,11 +100,14 @@ public class TrainingFragment extends Fragment implements SensorEventListener {
         }
         updateOrientationAngles();
 
-        int counts = presenter.checkExercise1(orientationAngles);
+        int counts = presenter.checkExercise(orientationAngles, trainingType);
 
         if (counts != TrainingPresenter.EXERCISE_FAILED) {
             if (counts != TrainingPresenter.EXERCISE_COMPLETED)
-                tv.setText(String.valueOf(counts));
+                tv.setText(String.format(Locale.getDefault(),
+                        "%d/%d",
+                        counts,
+                        TrainingTypes.getFullIterationsCount(trainingType)));
             else {
                 Toast.makeText(getActivity(), "Training COMPLETED!", Toast.LENGTH_LONG).show();
                 showStatistics();
@@ -122,7 +126,7 @@ public class TrainingFragment extends Fragment implements SensorEventListener {
         bundle.putString("date", startDateTime);
 
         getFragmentManager().beginTransaction()
-                .replace(R.id.container, TransferingFragment.newInstance(bundle))
+                .replace(R.id.container, NoteFragment.newInstance(bundle))
                 .commit();
     }
 

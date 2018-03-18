@@ -1,6 +1,7 @@
 package com.example.simulator.views.main;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -35,12 +36,25 @@ public class StartFragment extends Fragment {
     }
 
     @OnClick(R.id.button_start)
-    public void swapLayout() {
+    public void chooseType() {
+        ChooseTrainingDialog dialog = new ChooseTrainingDialog();
+        dialog.setTargetFragment(this, 1);
+        dialog.show(getFragmentManager(), "choose");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        int trainingType = data.getIntExtra("type", -1);
+        swapLayout(trainingType);
+    }
+
+    public void swapLayout(int trainingType) {
         String startDateTime = this.format(Calendar.getInstance().getTime());
         Bundle bundle = new Bundle();
         bundle.putString("start_date_time", startDateTime);
         bundle.putLong("start_time", System.currentTimeMillis());
-        bundle.putInt("training_type", TrainingTypes.TYPE1);
+        bundle.putInt("training_type", trainingType);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.container, TrainingFragment.newInstance(bundle));
@@ -49,7 +63,7 @@ public class StartFragment extends Fragment {
         Toast.makeText(getActivity(),
                 String.format(Locale.getDefault(),
                 "Current intensity: %d ms",
-                        TrainingTypes.getTrainingIntensity(TrainingTypes.TYPE1)),
+                        TrainingTypes.getTrainingIntensity(trainingType)),
                 Toast.LENGTH_SHORT).show();
     }
 

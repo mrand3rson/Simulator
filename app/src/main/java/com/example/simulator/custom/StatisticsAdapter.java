@@ -42,7 +42,7 @@ public class StatisticsAdapter extends RecyclerView.Adapter<StatisticsAdapter.Vi
         holder.typeAndDuration.setText(String.format(Locale.getDefault(),
                 "%d. Type: %s",
                 position+1,
-                TrainingTypes.parseTrainingTypes(list.get(position).getTrainingType())));
+                TrainingTypes.getTrainingName(list.get(position).getTrainingType())));
         holder.typeAndDuration.append(duration);
         holder.description.setText(list.get(position).getDescription());
 

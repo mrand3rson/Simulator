@@ -16,19 +16,19 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class TransferingFragment extends Fragment {
+public class NoteFragment extends Fragment {
 
     private Bundle bundle;
 
     @BindView(R.id.description_write)
     EditText description;
 
-    public TransferingFragment() {
+    public NoteFragment() {
 
     }
 
-    public static TransferingFragment newInstance(Bundle args) {
-        TransferingFragment fragment = new TransferingFragment();
+    public static NoteFragment newInstance(Bundle args) {
+        NoteFragment fragment = new NoteFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,5 +48,11 @@ public class TransferingFragment extends Fragment {
         bundle.putString("description", description.getText().toString());
 
         mainActivity.showStatistics(bundle);
+
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.container, new StartFragment())
+                .commit();
     }
+
+
 }

@@ -22,4 +22,22 @@ public class TrainingTypes {
         }
         return result;
     }
+
+    public static int getTrainingIntensity(int trainingType) {
+        int result;
+        switch (trainingType) {
+            case TrainingTypes.TYPE1: {
+                result = 2000;
+                break;
+            }
+            case TrainingTypes.TYPE2: {
+                result = 500;
+                break;
+            }
+            default: {
+                result = -1;
+            }
+        }
+        return result;
+    }
 }

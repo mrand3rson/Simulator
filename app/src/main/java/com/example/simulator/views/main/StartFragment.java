@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.simulator.R;
 import com.example.simulator.tools.TrainingTypes;
@@ -44,6 +45,12 @@ public class StartFragment extends Fragment {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.container, TrainingFragment.newInstance(bundle));
         ft.commit();
+
+        Toast.makeText(getActivity(),
+                String.format(Locale.getDefault(),
+                "Current intensity: %d ms",
+                        TrainingTypes.getTrainingIntensity(TrainingTypes.TYPE1)),
+                Toast.LENGTH_SHORT).show();
     }
 
     private String format(Date date) {

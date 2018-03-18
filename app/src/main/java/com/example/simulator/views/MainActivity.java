@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.simulator.R;
@@ -86,6 +87,14 @@ public class MainActivity extends AppCompatActivity
             getFragmentManager().beginTransaction()
                     .replace(R.id.container, ViewStatisticsFragment.newInstance(bundle))
                     .commit();
+
+            Menu menu = navigationView.getMenu();
+            for (int i = 0; i < menu.size(); i++) {
+                if (menu.getItem(i).getItemId() == R.id.nav_statistics) {
+                    menu.getItem(i).setChecked(true);
+                    break;
+                }
+            }
         }
     }
 }

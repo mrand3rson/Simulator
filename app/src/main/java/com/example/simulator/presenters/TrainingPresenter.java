@@ -1,9 +1,18 @@
 package com.example.simulator.presenters;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.widget.Toast;
+
+import com.example.simulator.tools.TrainingTypes;
+
+import java.io.IOException;
 
 
 public class TrainingPresenter implements ITraining {
@@ -12,7 +21,8 @@ public class TrainingPresenter implements ITraining {
     private final Context context;
     private boolean landscape;
     private float prevRoll;
-    private int count;
+    private long startIterationTime;
+    private int count, warningsCount;
 
     public TrainingPresenter(Context context) {
         this.context = context;
@@ -27,33 +37,75 @@ public class TrainingPresenter implements ITraining {
             if (!landscape) {
                 landscape = true;
 
-                if (prevRoll == 0)
+                if (prevRoll == 0) {
                     prevRoll = Math.signum(roll);
+                    startIterationTime = System.currentTimeMillis();
+                    vibrationResponse(VIBRATION_DURATION/4);
+                }
                 else {
                     if (Math.signum(roll) != 0
                             && Math.signum(roll) != prevRoll) {
                         prevRoll = Math.signum(roll);
+                        startIterationTime = System.currentTimeMillis();
                         count++;
-                        vibrationResponse();
+                        vibrationResponse(VIBRATION_DURATION);
                         if (checkIfCompleted1())
-                            return PART_COMPLETED;
-                        return count;
+                            return EXERCISE_COMPLETED;
                     }
                 }
             }
         } else {
             landscape = false;
         }
-        return PART_NOT_COMPLETED;
+        if (lowIntensity(TrainingTypes.TYPE1))
+            return EXERCISE_FAILED;
+
+        return count;
     }
 
-    private void vibrationResponse() {
+    private boolean lowIntensity(int type) {
+        if (System.currentTimeMillis() - startIterationTime > TrainingTypes.getTrainingIntensity(type)
+                && startIterationTime != 0) {
+
+            warningsCount++;
+            if (warningsCount == 3) {
+                return true;
+            }
+            warnUser();
+            startIterationTime = System.currentTimeMillis();
+        }
+        return false;
+    }
+
+    private void warnUser() {
+        Toast.makeText(context, "Faster!", Toast.LENGTH_SHORT).show();
+
+        Uri defaultRingtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(context, defaultRingtoneUri);
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+            mediaPlayer.prepare();
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp)
+                {
+                    mp.release();
+                }
+            });
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void vibrationResponse(int duration) {
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         if (v != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                v.vibrate(VibrationEffect.createOneShot(VIBRATION_DURATION, VibrationEffect.DEFAULT_AMPLITUDE));
+                v.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
             } else {
-                v.vibrate(VIBRATION_DURATION);
+                v.vibrate(duration);
             }
         }
     }

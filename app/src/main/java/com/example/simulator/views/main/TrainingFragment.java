@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.example.simulator.R;
 import com.example.simulator.presenters.ITraining;
 import com.example.simulator.presenters.TrainingPresenter;
-import com.example.simulator.tools.TrainingTypes;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -102,13 +101,17 @@ public class TrainingFragment extends Fragment implements SensorEventListener {
 
         int counts = presenter.checkExercise1(orientationAngles);
 
-        if (counts != TrainingPresenter.PART_NOT_COMPLETED) {
-            if (counts != TrainingPresenter.PART_COMPLETED)
+        if (counts != TrainingPresenter.EXERCISE_FAILED) {
+            if (counts != TrainingPresenter.EXERCISE_COMPLETED)
                 tv.setText(String.valueOf(counts));
             else {
                 Toast.makeText(getActivity(), "Training COMPLETED!", Toast.LENGTH_LONG).show();
                 showStatistics();
             }
+        } else {
+            Toast.makeText(getActivity(), "You are too slow!", Toast.LENGTH_SHORT).show();
+            stopTraining();
+            sensorManager.unregisterListener(this);
         }
     }
 

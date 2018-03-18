@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Simulator</string>
+
+    <string name="button_start_label">Start</string>
+    <string name="button_stop_label">Stop</string>
+    <string name="tip_start_label">Press Start button to start training</string>
+    <string name="tip_stop_label">Press Stop button to stop training and show statistics</string>
+
+    <string name="pref_previously_started">first launch</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="welcome_to_simulator">Welcome to Simulator!</string>
+    <string name="creator">Creator: Andrei Stepankov</string>
+    <string name="email">E-mail: andreistepankov@gmail.com</string>
+    <string name="trainings">Trainings</string>
+    <string name="statistics">Statistics</string>
+    <string name="some_words">Some words about this training…</string>
+    <string name="show_statistics">Show statistics</string>
+    <string name="start_iterations">0</string>
+    <string name="nothing_there">Seems nothing there.</string>
+</resources>

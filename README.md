@@ -1,6 +1,6 @@
 # Simulator
 
-This application is a fist training tool simulator. Using accelerometer 
+This application is a fist training tool simulator. Uses accelerometer 
 
 ## Features
 
